@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Local databases (will be seeded dynamically on startup)
+src/data/*.db
+src/data/*.db-journal
+
+# Environment variables
+.env
+
+# OS metadata files
+.DS_Store
+Thumbs.db
