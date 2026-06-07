@@ -1,0 +1,23 @@
+{
+  "name": "paypulse",
+  "version": "1.0.0",
+  "description": "PayPulse - Compensation Intelligence System - structured salary data comparison by company, level, and role.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "compensation",
+    "salary",
+    "levels",
+    "fyi"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.0",
+    "sqlite3": "^5.1.7"
+  }
+}

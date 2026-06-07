@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PayPulse — Real-Time Compensation Intelligence. Standardized leveling maps, pay structures, and company leveling comparisons.">
+  <title>PayPulse — Compensation Intelligence System</title>
+  
+  <!-- Preconnect Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <div class="app-container">
+    <!-- ═══════════════ Header ═══════════════ -->
+    <header class="app-header" role="banner">
+      <div class="header-brand">
+        <h1 class="header-logo">PayPulse <span>// Compensation Intelligence</span></h1>
+      </div>
+      <nav class="header-nav" role="tablist" aria-label="Main navigation">
+        <button class="nav-btn active" role="tab" aria-selected="true" data-target="section-dashboard">
+          📊 Dashboard
+        </button>
+        <button class="nav-btn" role="tab" aria-selected="false" data-target="section-explorer">
+          🔍 Salary Explorer
+        </button>
+        <button class="nav-btn" role="tab" aria-selected="false" data-target="section-matrix">
+          🛡️ Leveling Matrix
+        </button>
+        <button class="nav-btn" role="tab" aria-selected="false" data-target="section-compare">
+          ⚔️ Compare Levels
+        </button>
+        <button class="nav-btn" role="tab" aria-selected="false" data-target="section-evaluator">
+          🎯 Offer Evaluator
+        </button>
+        <button class="nav-btn" role="tab" aria-selected="false" data-target="section-simulator">
+          📈 Career Simulator
+        </button>
+        <button class="nav-btn" role="tab" aria-selected="false" data-target="section-submit">
+          ✍️ Submit Salary
+        </button>
+      </nav>
+    </header>
+
+    <!-- ═══════════════ Section: Dashboard ═══════════════ -->
+    <section id="section-dashboard" class="app-section active" role="tabpanel">
+      <!-- High-level Metric Cards -->
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3 class="card-title">📂 Total Submissions</h3>
+          <div class="card-value" id="stat-total-submissions">-</div>
+          <div class="card-subtitle">Verified platform salary records</div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">💰 Average Total Comp</h3>
+          <div class="card-value" id="stat-avg-tc">-</div>
+          <div class="card-subtitle">Global average annualized pay</div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">🏢 Top Paying Company</h3>
+          <div class="card-value" id="stat-top-company">-</div>
+          <div class="card-subtitle">Company with highest average salary</div>
+        </div>
+        <div class="card">
+          <h3 class="card-title">📈 Max Base Salary</h3>
+          <div class="card-value" id="stat-max-base">-</div>
+          <div class="card-subtitle">Highest recorded base salary</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Visual Summaries -->
+      <div class="compare-results">
+        <!-- Top Paying Companies Card -->
+        <div class="card">
+          <h2 class="card-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">🏢 Top Paying Companies (Average TC)</h2>
+          <div class="comp-bar-chart" id="top-paying-list">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Level Breakdown Card -->
+        <div class="card">
+          <h2 class="card-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">📊 Standardized Level Averages</h2>
+          <div class="comp-bar-chart" id="level-averages-list">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><span class="legend-color bar-base"></span> Base</div>
+            <div class="legend-item"><span class="legend-color bar-stock"></span> Stock</div>
+            <div class="legend-item"><span class="legend-color bar-bonus"></span> Bonus</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ Section: Salary Explorer ═══════════════ -->
+    <section id="section-explorer" class="app-section" role="tabpanel">
+      <div class="explorer-layout">
+        <!-- Sidebar Filters -->
+        <aside class="card filter-panel">
+          <h2 class="card-title" style="font-size: 1.2rem; margin-bottom: 1rem;">🔍 Filter Criteria</h2>
+          
+          <div class="filter-group">
+            <label class="filter-label" for="filter-company">Company</label>
+            <select id="filter-company" class="form-control">
+              <option value="">All Companies</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filter-level">Standard Level</label>
+            <select id="filter-level" class="form-control">
+              <option value="">All Levels</option>
+              <option value="Entry">Entry</option>
+              <option value="Mid">Mid</option>
+              <option value="Senior">Senior</option>
+              <option value="Staff">Staff</option>
+              <option value="Principal">Principal</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filter-role">Role/Title</label>
+            <input type="text" id="filter-role" class="form-control" placeholder="e.g. Software Engineer">
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filter-location">Location</label>
+            <input type="text" id="filter-location" class="form-control" placeholder="e.g. San Francisco">
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filter-sort">Sort By</label>
+            <select id="filter-sort" class="form-control">
+              <option value="created_at">Submission Date</option>
+              <option value="total_compensation">Total Compensation</option>
+              <option value="base_salary">Base Salary</option>
+              <option value="years_of_experience">Experience (YOE)</option>
+            </select>
+          </div>
+
+          <button class="btn btn--secondary" id="btn-reset-filters" style="margin-top: 1rem; justify-content: center;">
+            Reset Filters
+          </button>
+        </aside>
+
+        <!-- Data Display Table -->
+        <div class="table-wrapper">
+          <div class="table-container">
+            <table class="salary-table" id="salary-table">
+              <thead>
+                <tr>
+                  <th data-field="company_name">Company</th>
+                  <th data-field="level_name">Level</th>
+                  <th data-field="title">Title</th>
+                  <th data-field="location">Location</th>
+                  <th data-field="years_of_experience">YOE</th>
+                  <th data-field="base_salary">Base</th>
+                  <th data-field="stock_grant">Stock</th>
+                  <th data-field="bonus">Bonus</th>
+                  <th data-field="total_compensation">Total Comp</th>
+                </tr>
+              </thead>
+              <tbody id="salary-table-body">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="pagination">
+            <button class="btn btn--secondary" id="page-prev" disabled>◀ Previous</button>
+            <span id="page-info" style="font-weight: 600; font-size: 0.9rem; color: var(--text-secondary);">Page 1 of 1</span>
+            <button class="btn btn--secondary" id="page-next" disabled>Next ▶</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ Section: Compare Levels ═══════════════ -->
+    <section id="section-compare" class="app-section" role="tabpanel">
+      <!-- Selector bar -->
+      <div class="compare-selector">
+        <div style="flex: 1; max-width: 300px;">
+          <label class="filter-label" for="compare-company-a">Company A</label>
+          <select id="compare-company-a" class="form-control" style="margin-top: 6px;">
+            <option value="">Select Company A</option>
+          </select>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div style="flex: 1; max-width: 300px;">
+          <label class="filter-label" for="compare-company-b">Company B</label>
+          <select id="compare-company-b" class="form-control" style="margin-top: 6px;">
+            <option value="">Select Company B</option>
+          </select>
+        </div>
+        <button class="btn" id="btn-compare" style="margin-top: 22px;">Compare</button>
+      </div>
+
+      <!-- Comparison visual cards -->
+      <div id="compare-results-container" style="display: none;">
+        <div class="compare-results">
+          <!-- Stacked Bar Chart Comparison -->
+          <div class="card">
+            <h2 class="card-title" style="font-size: 1.3rem;" id="compare-chart-title">Level Compensation Breakdown</h2>
+            <div class="comp-bar-chart" id="compare-chart-body">
+              <!-- Rendered dynamically by JS -->
+            </div>
+            <div class="chart-legend" style="margin-top: 2rem;">
+              <div class="legend-item"><span class="legend-color bar-base"></span> Base Salary</div>
+              <div class="legend-item"><span class="legend-color bar-stock"></span> Stock Grants</div>
+              <div class="legend-item"><span class="legend-color bar-bonus"></span> Bonuses</div>
+            </div>
+          </div>
+
+          <!-- Comparison Table details -->
+          <div class="card comparison-table-wrap">
+            <h2 class="card-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">Matched Level-to-Level Comparison</h2>
+            <div class="table-container">
+              <table class="salary-table" style="font-size: 0.9rem;">
+                <thead>
+                  <tr>
+                    <th>Standard Level</th>
+                    <th id="compare-th-a">Company A</th>
+                    <th id="compare-th-b">Company B</th>
+                    <th>Difference</th>
+                  </tr>
+                </thead>
+                <tbody id="compare-table-body">
+                  <!-- Rendered by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Comparison Empty State -->
+      <div class="card" id="compare-empty-state" style="text-align: center; padding: 4rem 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⚔️</div>
+        <h2 class="text-primary" style="margin-bottom: 0.5rem;">No Comparison Selected</h2>
+        <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto;">Select two companies above and click **Compare** to view their mapped leveling and compensation structures side-by-side.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════ Section: Submit Salary ═══════════════ -->
+    <section id="section-submit" class="app-section" role="tabpanel">
+      <div class="card form-layout">
+        <h2 class="card-title" style="font-size: 1.4rem; margin-bottom: 1.5rem;">✍️ Submit Compensation Data</h2>
+        
+        <form id="submit-salary-form">
+          <div class="form-grid">
+            <div class="filter-group">
+              <label class="filter-label" for="form-company">Company Name <span style="color: var(--color-error)">*</span></label>
+              <input type="text" id="form-company" class="form-control" placeholder="e.g. Google, Meta" required>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="form-level">Level Code <span style="color: var(--color-error)">*</span></label>
+              <input type="text" id="form-level" class="form-control" placeholder="e.g. L5, E5, 63" required>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="filter-group">
+              <label class="filter-label" for="form-title">Job Title <span style="color: var(--color-error)">*</span></label>
+              <input type="text" id="form-title" class="form-control" placeholder="e.g. Software Engineer, Product Manager" required>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="form-location">Location <span style="color: var(--color-error)">*</span></label>
+              <input type="text" id="form-location" class="form-control" placeholder="e.g. San Francisco, CA" required>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="filter-group">
+              <label class="filter-label" for="form-yoe">Years of Experience (Total) <span style="color: var(--color-error)">*</span></label>
+              <input type="number" id="form-yoe" class="form-control" min="0" step="0.5" placeholder="e.g. 5" required>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label" for="form-yac">Years at Company <span style="color: var(--color-error)">*</span></label>
+              <input type="number" id="form-yac" class="form-control" min="0" step="0.5" placeholder="e.g. 2" required>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-glass); margin: 1.5rem 0; padding-top: 1.5rem;">
+            <h3 class="filter-label" style="font-size: 0.95rem; margin-bottom: 1rem;">Compensation Details (Annualized USD)</h3>
+            
+            <div class="form-grid">
+              <div class="filter-group">
+                <label class="filter-label" for="form-base">Base Salary <span style="color: var(--color-error)">*</span></label>
+                <input type="number" id="form-base" class="form-control" min="1" placeholder="e.g. 150000" required>
+              </div>
+
+              <div class="filter-group">
+                <label class="filter-label" for="form-stock">Stock Grant Value (Per Year)</label>
+                <input type="number" id="form-stock" class="form-control" min="0" placeholder="e.g. 80000 (0 if none)">
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="filter-group">
+                <label class="filter-label" for="form-bonus">Bonus (Per Year)</label>
+                <input type="number" id="form-bonus" class="form-control" min="0" placeholder="e.g. 25000 (0 if none)">
+              </div>
+
+              <!-- Real-time TC Calculator Preview -->
+              <div class="filter-group" style="justify-content: flex-end;">
+                <div style="background: rgba(0, 206, 201, 0.05); border: 1px dashed var(--accent-secondary); padding: 0.8rem 1.2rem; border-radius: 8px; text-align: right;">
+                  <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">Estimated Total Compensation</span>
+                  <div style="font-size: 1.6rem; font-weight: 800; color: var(--accent-secondary); font-family: var(--font-mono); margin-top: 2px;" id="form-tc-preview">$0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="reset" class="btn btn--secondary">Clear</button>
+            <button type="submit" class="btn">Submit Data</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ═══════════════ Section: Leveling Matrix ═══════════════ -->
+    <section id="section-matrix" class="app-section" role="tabpanel">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <h2 class="card-title" style="font-size: 1.4rem; margin-bottom: 0.5rem;">🛡️ Interactive Leveling Matrix</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Click on any mapped cell to inspect the total compensation split (Base vs. Stock vs. Bonus) and statistics for that level.</p>
+        
+        <div class="table-container">
+          <table class="salary-table" id="matrix-table" style="text-align: center; font-size: 0.9rem;">
+            <thead>
+              <tr id="matrix-header-row">
+                <th>Standard Level</th>
+                <!-- Companies dynamically populated -->
+              </tr>
+            </thead>
+            <tbody id="matrix-table-body">
+              <!-- Grid cells dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Side detail drawer or popup card -->
+      <div class="card" id="matrix-detail-card" style="display: none;">
+        <h3 class="card-title" style="font-size: 1.2rem; margin-bottom: 1rem;" id="matrix-detail-title">Level Details</h3>
+        <div class="compare-results">
+          <div style="flex: 1;">
+            <div class="comp-bar-chart" id="matrix-detail-chart"></div>
+            <div class="chart-legend" style="margin-top: 1rem;">
+              <div class="legend-item"><span class="legend-color bar-base"></span> Base</div>
+              <div class="legend-item"><span class="legend-color bar-stock"></span> Stock</div>
+              <div class="legend-item"><span class="legend-color bar-bonus"></span> Bonus</div>
+            </div>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; justify-content: center; gap: 10px; font-size: 0.9rem;">
+            <div><strong>Company-specific Level:</strong> <span id="matrix-detail-code">-</span></div>
+            <div><strong>Standard Level Mapping:</strong> <span id="matrix-detail-standard">-</span></div>
+            <div><strong>Average Total Compensation:</strong> <span id="matrix-detail-tc" style="color: var(--accent-secondary); font-weight: bold;">-</span></div>
+            <div><strong>Number of verified submissions:</strong> <span id="matrix-detail-count">-</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ Section: Offer Evaluator ═══════════════ -->
+    <section id="section-evaluator" class="app-section" role="tabpanel">
+      <div class="compare-results">
+        <!-- Input Form -->
+        <div class="card">
+          <h2 class="card-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">🎯 Pending Offer Details</h2>
+          <form id="evaluate-offer-form">
+            <div class="filter-group" style="margin-bottom: 1rem;">
+              <label class="filter-label" for="eval-company">Company</label>
+              <select id="eval-company" class="form-control" required>
+                <option value="">Select Company</option>
+              </select>
+            </div>
+            <div class="filter-group" style="margin-bottom: 1rem;">
+              <label class="filter-label" for="eval-level">Level Code (e.g. L4, E4)</label>
+              <input type="text" id="eval-level" class="form-control" placeholder="e.g. L5" required>
+            </div>
+            <div class="filter-group" style="margin-bottom: 1rem;">
+              <label class="filter-label" for="eval-tax-state">Tax Jurisdiction (State)</label>
+              <select id="eval-tax-state" class="form-control" required>
+                <option value="CA">California (CA) - High State Tax</option>
+                <option value="WA">Washington (WA) - 0% State Tax</option>
+                <option value="NY">New York (NY) - State & City Tax</option>
+                <option value="REMOTE">Other / Remote (4% Avg State Tax)</option>
+              </select>
+            </div>
+            <div class="filter-group" style="margin-bottom: 1rem;">
+              <label class="filter-label" for="eval-base">Base Salary (Annual USD)</label>
+              <input type="number" id="eval-base" class="form-control" placeholder="e.g. 160000" required>
+            </div>
+            <div class="filter-group" style="margin-bottom: 1rem;">
+              <label class="filter-label" for="eval-stock">Stock Grant Value (Annual USD)</label>
+              <input type="number" id="eval-stock" class="form-control" placeholder="e.g. 80000">
+            </div>
+            <div class="filter-group" style="margin-bottom: 1.5rem;">
+              <label class="filter-label" for="eval-bonus">Bonus (Annual USD)</label>
+              <input type="number" id="eval-bonus" class="form-control" placeholder="e.g. 20000">
+            </div>
+            <button type="submit" class="btn" style="width: 100%; justify-content: center;">Evaluate Offer</button>
+          </form>
+        </div>
+
+        <!-- Evaluation Results Display -->
+        <div class="card" id="evaluator-results-card" style="display: none; flex-direction: column; gap: 1.5rem;">
+          <div>
+            <h2 class="card-title" style="font-size: 1.3rem; margin-bottom: 0.5rem;">📊 Offer Evaluation Report</h2>
+            <div style="font-size: 0.9rem; color: var(--text-secondary);">Here is how your offer performs compared to our verified data for this leveling bucket.</div>
+          </div>
+          
+          <!-- Percentile gauge -->
+          <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-glass);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 0.9rem; font-weight: 600;">Offer Percentile Rating</span>
+              <span style="font-size: 1.5rem; font-weight: 800; color: var(--accent-secondary);" id="eval-percentile-badge">75th</span>
+            </div>
+            <div class="bar-container" style="height: 14px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+              <div class="bar-segment bar-stock" id="eval-percentile-bar" style="width: 75%; border-radius: 6px;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+              <span>0% (Lowest)</span>
+              <span>50% (Median)</span>
+              <span>100% (Highest)</span>
+            </div>
+          </div>
+
+          <!-- Total Compensation Comparison -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-glass);">
+            <div>
+              <span style="font-size: 0.8rem; color: var(--text-secondary);">Your Offer Total Comp</span>
+              <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-mono);" id="eval-offer-tc">$0</div>
+            </div>
+            <div style="font-size: 1.5rem; color: var(--text-muted); font-weight: 300;">vs</div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.8rem; color: var(--text-secondary);">Market Average Total Comp</span>
+              <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-primary); font-family: var(--font-mono);" id="eval-market-tc">$0</div>
+            </div>
+          </div>
+
+          <!-- Tax Impact Estimate -->
+          <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.95rem; font-weight: 700;">Estimated Annual Post-Tax Take-Home</span>
+              <span style="font-size: 1.4rem; font-weight: 800; color: var(--color-success); font-family: var(--font-mono);" id="eval-net-pay">$0</span>
+            </div>
+            <div class="bar-container" style="height: 16px; background: rgba(255,255,255,0.05); border-radius: 6px; display: flex; overflow: hidden;">
+              <div class="bar-segment" id="tax-bar-takehome" style="width: 60%; background: var(--color-success);" title="Take-Home Pay"></div>
+              <div class="bar-segment" id="tax-bar-fed" style="width: 30%; background: var(--accent-primary);" title="Federal Tax"></div>
+              <div class="bar-segment" id="tax-bar-state" style="width: 10%; background: var(--color-warning);" title="State Tax"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); flex-wrap: wrap; gap: 8px;">
+              <div><span class="legend-color" style="background: var(--color-success); display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px;"></span> Take-Home: <span id="tax-lbl-takehome" style="font-weight: 600; color: var(--text-primary);">$0</span></div>
+              <div><span class="legend-color" style="background: var(--accent-primary); display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px;"></span> Fed Tax: <span id="tax-lbl-fed" style="font-weight: 600; color: var(--text-primary);">$0</span></div>
+              <div><span class="legend-color" style="background: var(--color-warning); display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px;"></span> State Tax: <span id="tax-lbl-state" style="font-weight: 600; color: var(--text-primary);">$0</span></div>
+            </div>
+            <div id="tax-comparison-promo" style="padding-top: 8px; border-top: 1px dashed var(--border-glass); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4;">
+              <!-- Washington comparative text dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Negotiation advice alerts list -->
+          <div>
+            <h3 class="filter-label" style="font-size: 0.9rem; margin-bottom: 8px;">💡 Negotiation Guidance & Strategy</h3>
+            <div id="eval-guidance-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Advices rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Interactive Negotiation Script & Email Builder -->
+          <div style="border-top: 1px solid var(--border-glass); padding-top: 1.5rem; display: flex; flex-direction: column; gap: 10px;">
+            <h3 class="filter-label" style="font-size: 0.95rem; margin-bottom: 0.2rem;">✉️ Live Negotiation Script & Email Builder</h3>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Select a tone to generate a custom counter-offer message based on your compensation report.</p>
+            
+            <div style="display: flex; gap: 8px;" id="negotiation-tone-container">
+              <button type="button" class="btn btn--secondary tone-chip active" data-tone="collaborative" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">🤝 Collaborative</button>
+              <button type="button" class="btn btn--secondary tone-chip" data-tone="competitive" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">⚡ Competitive (Multi-Offer)</button>
+              <button type="button" class="btn btn--secondary tone-chip" data-tone="polite" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">🙏 Polite Inquiry</button>
+            </div>
+
+            <div style="position: relative;">
+              <textarea id="negotiation-email-box" class="form-control" rows="12" style="font-family: var(--font-sans); font-size: 0.88rem; line-height: 1.5; background: rgba(0,0,0,0.45); border-color: var(--border-glass); padding: 1rem; padding-bottom: 3rem; border-radius: 8px; resize: vertical; color: var(--text-primary);" spellcheck="false"></textarea>
+              <button type="button" class="btn" id="btn-copy-script" style="position: absolute; bottom: 12px; right: 12px; padding: 0.45rem 0.9rem; font-size: 0.8rem;">📋 Copy Script</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State for Evaluator -->
+        <div class="card" id="evaluator-empty-state" style="text-align: center; padding: 4rem 2rem;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+          <h2 class="text-primary" style="margin-bottom: 0.5rem;">Evaluate Your Offer</h2>
+          <p style="color: var(--text-secondary); max-width: 450px; margin: 0 auto;">Enter your salary, stock, and bonus offers to see how they rank against verified data and receive strategic negotiation recommendations.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ Section: Career Simulator ═══════════════ -->
+    <section id="section-simulator" class="app-section" role="tabpanel">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <h2 class="card-title" style="font-size: 1.4rem; margin-bottom: 0.5rem;">📈 Career Progression & Pay Simulator</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Select a company to simulate how total compensation scales and shifts from base salary to equity/stock as you climb the technical ladder.</p>
+        
+        <div style="max-width: 300px; margin-bottom: 1.5rem;">
+          <label class="filter-label" for="simulator-company-select">Select Company</label>
+          <select id="simulator-company-select" class="form-control" style="margin-top: 6px;">
+            <option value="">Select Company</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="compare-results" id="simulator-results-container" style="display: none;">
+        <!-- Stacked Progression Chart -->
+        <div class="card">
+          <h3 class="card-title" style="font-size: 1.2rem; margin-bottom: 1.5rem;" id="simulator-chart-title">Career Pay Structure</h3>
+          <div class="comp-bar-chart" id="simulator-chart-body">
+            <!-- Simulated bar levels -->
+          </div>
+          <div class="chart-legend" style="margin-top: 2rem;">
+            <div class="legend-item"><span class="legend-color bar-base"></span> Base Salary</div>
+            <div class="legend-item"><span class="legend-color bar-stock"></span> Stock Grants</div>
+            <div class="legend-item"><span class="legend-color bar-bonus"></span> Bonuses</div>
+          </div>
+        </div>
+
+        <!-- Detailed Breakdown -->
+        <div class="card">
+          <h3 class="card-title" style="font-size: 1.2rem; margin-bottom: 1rem;">Progression Breakdown</h3>
+          <div class="table-container">
+            <table class="salary-table" style="font-size: 0.85rem;">
+              <thead>
+                <tr>
+                  <th>Standard Tier</th>
+                  <th>Level Code</th>
+                  <th>Base</th>
+                  <th>Stock</th>
+                  <th>Bonus</th>
+                  <th>Total Comp</th>
+                </tr>
+              </thead>
+              <tbody id="simulator-table-body">
+                <!-- Level details rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulator Empty State -->
+      <div class="card" id="simulator-empty-state" style="text-align: center; padding: 4rem 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📈</div>
+        <h2 class="text-primary" style="margin-bottom: 0.5rem;">Select a Company to Simulate Path</h2>
+        <p style="color: var(--text-secondary); max-width: 450px; margin: 0 auto;">Select a company above to model the promotional steps and view the compensation growth curve.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
