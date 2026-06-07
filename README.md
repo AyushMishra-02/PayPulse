@@ -59,7 +59,7 @@ PayPulse features a premium glassmorphic dark-mode interface with zero external 
 ### Local Setup
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/paypulse.git
+   git clone https://github.com/AyushMishra-02/paypulse.git
    cd paypulse
    ```
 2. Install dependencies:
